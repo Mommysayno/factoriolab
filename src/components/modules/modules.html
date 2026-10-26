@@ -1,4 +1,4 @@
-@for (entry of value(); track entry.id) {
+@for (entry of value(); track $index) {
   <div class="flex" [class.-mt-px]="!$first">
     <lab-input-number
       class="w-0 grow"

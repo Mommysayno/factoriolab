@@ -56,7 +56,11 @@ export class MachinesStore extends RecordStore<MachineState> {
           settings.moduleRankIds,
           machine.modules,
         );
-        s.beacons = this.hydration.hydrateBeacons(s.beacons, settings.beacons);
+        s.beacons = this.hydration.hydrateBeacons(
+          s.beacons,
+          settings.beacons,
+          data.beaconRecord,
+        );
       } else {
         // Machine doesn't support modules, remove any
         delete s.modules;

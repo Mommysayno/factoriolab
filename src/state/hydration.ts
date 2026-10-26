@@ -1,5 +1,6 @@
 import { inject, Service } from '@angular/core';
 
+import { Beacon } from '~/data/schema/beacon';
 import { Option } from '~/option/option';
 import { Rational, rational } from '~/rational/rational';
 import { areArraysEqual } from '~/utils/equality';
@@ -113,7 +114,7 @@ export class Hydration {
       return r;
     });
 
-    if (result.every((r) => Object.keys(r).length === 0)) return [];
+    if (result.length === 1 && Object.keys(result[0]).length === 0) return [];
 
     return result;
   }
@@ -121,6 +122,7 @@ export class Hydration {
   hydrateBeacons(
     value: BeaconSettings[] | undefined,
     def: BeaconSettings[] | undefined,
+    beaconRecord?: Record<string, Beacon>,
   ): BeaconSettings[] | undefined {
     if (value == null) return def;
     if (def == null || def.length === 0) return value;
@@ -135,7 +137,7 @@ export class Hydration {
           id: coalesce(m.id, moduleSettings?.id),
           count: coalesce(m.count, moduleSettings?.count),
         })),
-        beaconSettings.modules,
+        beaconSettings.modules?.map((m) => ({ ...m })),
       ),
       total: coalesce(b.total, beaconSettings.total),
     }));
@@ -148,7 +150,11 @@ export class Hydration {
         (a, b) => a.add(coalesce(b.count, rational.zero)),
         rational.zero,
       );
-      const empty = moduleSettings?.count?.sub(total);
+      const slotCount = coalesce(
+        beaconRecord?.[coalesce(b.id, '')]?.modules,
+        moduleSettings?.count,
+      );
+      const empty = slotCount?.sub(total);
       if (empty?.gt(rational.zero)) b.modules.push({ count: empty, id: '' });
 
       return b;

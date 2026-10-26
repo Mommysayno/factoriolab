@@ -226,7 +226,7 @@ export class Adjustment {
           (t, b) => t.add(coalesce(b.count, rational.zero)),
           rational.zero,
         );
-        const profileIndex = Math.round(total.toNumber()) - 1;
+        const totalProfileIndex = Math.round(total.toNumber()) - 1;
 
         for (const beaconSettings of recipeState.beacons) {
           if (
@@ -238,6 +238,17 @@ export class Adjustment {
           }
 
           const beacon = data.beaconRecord[beaconSettings.id];
+          const beaconBaseId = baseId(beaconSettings.id);
+          let profileIndex = totalProfileIndex;
+          if (beaconBaseId === 'maraxsis-conduit') {
+            const sameTypeTotal = recipeState.beacons
+              .filter((b) => baseId(coalesce(b.id, '')) === beaconBaseId)
+              .reduce(
+                (t, b) => t.add(coalesce(b.count, rational.zero)),
+                rational.zero,
+              );
+            profileIndex = Math.round(sameTypeTotal.toNumber()) - 1;
+          }
 
           let scale = rational.one;
           if (beacon.profile?.[profileIndex] != null)
@@ -251,6 +262,12 @@ export class Adjustment {
 
             for (const effect of effects) {
               if (!module[effect]) continue;
+              if (
+                !beacon.disallowedEffects?.includes(effect) &&
+                recipe.disallowedEffects?.includes(effect)
+              ) {
+                continue;
+              }
 
               const value = module[effect]
                 .mul(count)
@@ -848,7 +865,11 @@ export class Adjustment {
         machine.modules,
         def?.modules,
       );
-      s.beacons = this.hydration.hydrateBeacons(s.beacons, def?.beacons);
+      s.beacons = this.hydration.hydrateBeacons(
+        s.beacons,
+        def?.beacons,
+        data.beaconRecord,
+      );
     } else {
       // Machine doesn't support modules, remove any
       delete s.modules;

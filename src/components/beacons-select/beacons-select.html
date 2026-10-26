@@ -27,7 +27,7 @@
             labTooltipAction="beaconsSelect.tooltip"
           ></lab-icon>
         }
-        @for (module of beacon.modules; track module.id) {
+        @for (module of beacon.modules; track $index) {
           @if (module.id === '') {
             <lab-icon
               value="module"

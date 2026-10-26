@@ -5,7 +5,7 @@
   (open)="open()"
   (save)="save()"
 >
-  @for (module of value(); track module.id) {
+  @for (module of value(); track $index) {
     @if (module.id === '') {
       <lab-icon
         value="module"

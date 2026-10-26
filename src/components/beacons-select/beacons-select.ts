@@ -11,9 +11,11 @@ import { faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 import { rational } from '~/rational/rational';
 import { BeaconSettings } from '~/state/beacon-settings';
+import { ModuleSettings } from '~/state/module-settings';
+import { Options } from '~/state/options';
 import { SettingsStore } from '~/state/settings/settings-store';
 import { TranslatePipe } from '~/translate/translate-pipe';
-import { coalesce } from '~/utils/nullish';
+import { coalesce, notNullish } from '~/utils/nullish';
 import { spread } from '~/utils/object';
 
 import { Button } from '../button/button';
@@ -54,6 +56,7 @@ let nextUniqueId = 0;
   host: { class: 'flex' },
 })
 export class BeaconsSelect extends Control<BeaconSettings[]> {
+  private readonly options = inject(Options);
   protected readonly settingsStore = inject(SettingsStore);
 
   private readonly uniqueId = (nextUniqueId++).toString();
@@ -84,7 +87,33 @@ export class BeaconsSelect extends Control<BeaconSettings[]> {
     value: BeaconSettings[F],
   ): void {
     this.editValue.update((values) =>
-      values.map((v, j) => (j === i ? spread(v, { [field]: value }) : v)),
+      values.map((v, j) => {
+        if (j !== i) return v;
+        if (field === 'id' && typeof value === 'string') {
+          const data = this.settingsStore.dataset();
+          const beacon = data.beaconRecord[value];
+          const allowedIds = new Set(
+            this.options
+              .moduleOptions(beacon, this.settingsStore.settings(), data)
+              .map((o) => o.value),
+          );
+          let remaining = beacon.modules;
+          const modules: ModuleSettings[] = [];
+          for (const m of coalesce(v.modules, [])) {
+            if (!m.id || !allowedIds.has(m.id)) continue;
+            const count = coalesce(m.count, rational.zero).min(remaining);
+            if (count.gt(rational.zero)) {
+              modules.push({ id: m.id, count });
+              remaining = remaining.sub(count);
+            }
+          }
+          if (remaining.gt(rational.zero)) {
+            modules.push({ id: '', count: remaining });
+          }
+          return spread(v, { [field]: value, modules });
+        }
+        return spread(v, { [field]: value });
+      }),
     );
   }
 
@@ -95,7 +124,10 @@ export class BeaconsSelect extends Control<BeaconSettings[]> {
   addEntry(): void {
     this.editValue.update((v) => {
       v ??= [];
-      const id = this.settingsStore.options().beacons[0].value;
+      const usedIds = new Set(v.map((b) => b.id).filter(notNullish));
+      const beacons = this.settingsStore.options().beacons;
+      const id = (beacons.find((b) => !usedIds.has(b.value)) ?? beacons[0])
+        .value;
       const count = this.settingsStore.dataset().beaconRecord[id].modules;
       const total = this.settingsStore.settings().beaconReceivers;
       return [

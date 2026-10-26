@@ -133,9 +133,13 @@ describe('Settings', () => {
   describe('changeBeacons', () => {
     it('should dehydrate the beacons', () => {
       spyOn(component['hydration'], 'dehydrateBeacons');
+      spyOn(component['settingsStore'], 'apply');
       spyOn(component['machinesStore'], 'updateRecord');
-      component.changeBeacons(ItemId.AssemblingMachine2, []);
+      component.changeBeacons(undefined, []);
       expect(component['hydration'].dehydrateBeacons).toHaveBeenCalled();
+      expect(component['settingsStore'].apply).toHaveBeenCalled();
+
+      component.changeBeacons(ItemId.AssemblingMachine2, []);
       expect(component['machinesStore'].updateRecord).toHaveBeenCalled();
     });
   });

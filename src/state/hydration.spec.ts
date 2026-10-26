@@ -166,6 +166,12 @@ describe('Hydration', () => {
               modules: [{ count: rational(2n), id: ItemId.SpeedModule3 }],
             },
           ],
+          {
+            [ItemId.Beacon]: {
+              effectivity: rational.one,
+              modules: rational(2n),
+            },
+          },
         ),
       ).toEqual([
         {

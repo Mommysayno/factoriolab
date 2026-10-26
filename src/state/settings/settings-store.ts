@@ -1081,7 +1081,11 @@ export class SettingsStore extends Store<SettingsState> {
       defaultFuelRankIds,
       moduleRankIds,
       defaultModuleRankIds,
-      beacons: this.hydration.hydrateBeacons(state.beacons, defaultBeacons),
+      beacons: this.hydration.hydrateBeacons(
+        state.beacons,
+        defaultBeacons,
+        data.beaconRecord,
+      ),
       overclock: state.overclock ?? defaults?.overclock,
       miningBonus: coalesce(state.miningBonus, miningBonus),
       researchBonus: coalesce(state.researchBonus, researchBonus),

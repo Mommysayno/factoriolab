@@ -335,6 +335,34 @@ describe('Adjustment', () => {
         data,
       );
       expect(result.time).toEqual(rational(1n, 60n));
+      data.beaconRecord['maraxsis-conduit'] = {
+        effectivity: rational.one,
+        modules: rational(4n),
+        profile: [rational.one],
+      };
+      const conduitSettings = spread(
+        recipesStore.settings()[RecipeId.SteelChest],
+        {
+          beacons: [
+            {
+              id: 'maraxsis-conduit',
+              count: rational.one,
+              modules: [
+                { id: ItemId.ProductivityModule, count: rational.one },
+                { id: ItemId.SpeedModule, count: rational.one },
+              ],
+            },
+          ],
+        },
+      );
+      const conduitResult = service.adjustRecipe(
+        RecipeId.SteelChest,
+        conduitSettings,
+        itemsStore.settings(),
+        settingsStore.settings(),
+        data,
+      );
+      expect(conduitResult.effects.productivity).toEqual(rational.one);
     });
 
     it('should find matching nonchemical fuel', () => {

@@ -316,7 +316,7 @@
                 class="-ms-px"
                 rounded="end"
                 [ngModel]="settings().beacons"
-                (ngModelChange)="settingsStore.apply({ beacons: $event })"
+                (ngModelChange)="changeBeacons(undefined, $event)"
               ></lab-beacons-select>
             }
           </div>

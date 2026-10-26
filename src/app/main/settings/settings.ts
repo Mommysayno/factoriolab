@@ -233,10 +233,16 @@ export class Settings {
     this.machinesStore.updateRecord(machineId, { modules });
   }
 
-  changeBeacons(machineId: string, value: BeaconSettings[]): void {
-    const def = this.settings().beacons;
-    const beacons = this.hydration.dehydrateBeacons(value, def);
-    this.machinesStore.updateRecord(machineId, { beacons });
+  changeBeacons(machineId: string | undefined, value: BeaconSettings[]): void {
+    if (machineId == null) {
+      const def = this.settingsStore.defaults()?.beacons;
+      const beacons = this.hydration.dehydrateBeacons(value, def);
+      this.settingsStore.apply({ beacons });
+    } else {
+      const def = this.settings().beacons;
+      const beacons = this.hydration.dehydrateBeacons(value, def);
+      this.machinesStore.updateRecord(machineId, { beacons });
+    }
   }
 
   removeMachine(id: string): void {
