@@ -31,6 +31,11 @@ export const datasets: Datasets = {
     { id: 'pysalf', name: 'Pyanodons + AL', game: 'factorio' },
     { id: 'sea', name: 'Sea Block', game: 'factorio' },
     { id: 'sxp', name: 'Space Exploration', game: 'factorio' },
+    { id: 'par', name: 'Paracelsin', game: 'factorio' },
+    { id: 'sec', name: 'Secretas', game: 'factorio' },
+    { id: 'ten', name: 'Tenebris Prime', game: 'factorio' },
+    { id: 'igr', name: 'Igrys', game: 'factorio' },
+    { id: 'mar', name: 'Maraxsis', game: 'factorio' },
     { id: 'boi', name: 'Belts of Iron', game: 'belts-of-iron' },
     { id: 'coi', name: 'Captain of Industry', game: 'captain-of-industry' },
     { id: 'dsp', name: 'Dyson Sphere Program', game: 'dyson-sphere-program' },
@@ -124,6 +129,11 @@ export const datasets: Datasets = {
     'ows',
     'spa',
     'sky',
+    'par',
+    'sec',
+    'ten',
+    'igr',
+    'mar',
   ],
 };
 

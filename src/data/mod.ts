@@ -1,5 +1,14 @@
 import { Game } from './game';
 
+export enum FactorioModId {
+  SpaceAge = '2x1',
+  Paracelsin = 'par',
+  Secretas = 'sec',
+  TenebrisPrime = 'ten',
+  Igrys = 'igr',
+  Maraxsis = 'mar',
+}
+
 export interface ModInfo {
   /**
    * Do not use the colon (:) character in ID.

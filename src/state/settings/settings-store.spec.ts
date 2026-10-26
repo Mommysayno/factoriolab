@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { CUSTOM_MOD, Game } from '~/data/game';
 import { gameInfo } from '~/data/game-info';
+import { FactorioModId } from '~/data/mod';
 import { EnergyType } from '~/data/schema/energy-type';
 import { QualityJson } from '~/data/schema/quality';
 import { rational } from '~/rational/rational';
@@ -200,7 +201,15 @@ describe('SettingsStore', () => {
 
   describe('modOptions', () => {
     it('should get mod options for a game', () => {
-      expect(service.modOptions().length).toBeGreaterThan(0);
+      const options = service.modOptions();
+      expect(options.length).toBeGreaterThan(0);
+      const values = options.map((o) => o.value);
+      expect(values).toContain(FactorioModId.SpaceAge);
+      expect(values).toContain(FactorioModId.Paracelsin);
+      expect(values).toContain(FactorioModId.Secretas);
+      expect(values).toContain(FactorioModId.TenebrisPrime);
+      expect(values).toContain(FactorioModId.Igrys);
+      expect(values).toContain(FactorioModId.Maraxsis);
     });
   });
 
